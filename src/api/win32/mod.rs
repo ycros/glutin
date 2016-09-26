@@ -107,6 +107,12 @@ impl WindowProxy {
     }
 }
 
+#[derive(Clone)]
+pub struct WindowHandle(pub winapi::HWND);
+
+unsafe impl Send for WindowHandle {}
+unsafe impl Sync for WindowHandle {}
+
 impl Window {
     /// See the docs in the crate root file.
     pub fn new(window: &WindowAttributes, pf_reqs: &PixelFormatRequirements,

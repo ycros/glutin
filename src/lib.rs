@@ -65,6 +65,7 @@ pub use headless::{HeadlessRendererBuilder, HeadlessContext};
 pub use window::{WindowProxy, PollEventsIterator, WaitEventsIterator};
 pub use window::{AvailableMonitorsIter, MonitorId, get_available_monitors, get_primary_monitor};
 pub use native_monitor::NativeMonitorId;
+pub use platform::WindowHandle;
 
 use std::io;
 #[cfg(not(target_os = "macos"))]
@@ -534,6 +535,11 @@ pub struct WindowAttributes {
     /// [iOS only] Enable multitouch, see [UIView#multipleTouchEnabled]
     /// (https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIView_Class/#//apple_ref/occ/instp/UIView/multipleTouchEnabled)
     pub multitouch: bool,
+
+    /// Whether this window should be created as a child of a parent window.
+    ///
+    /// The default is `None`.
+    pub parent: Option<platform::WindowHandle>,
 }
 
 impl Default for WindowAttributes {
@@ -549,6 +555,7 @@ impl Default for WindowAttributes {
             transparent: false,
             decorations: true,
             multitouch: false,
+            parent: None,
         }
     }
 }

@@ -119,7 +119,9 @@ unsafe fn init(title: Vec<u16>, window: &WindowAttributes, pf_reqs: &PixelFormat
     }
 
     // computing the style and extended style of the window
-    let (ex_style, style) = if window.monitor.is_some() || window.decorations == false {
+    let (ex_style, style) = if window.parent.is_some() {
+        (winapi::WS_EX_APPWINDOW, winapi::WS_CHILD | winapi::WS_CLIPSIBLINGS | winapi::WS_CLIPCHILDREN)
+    } else if window.monitor.is_some() || window.decorations == false {
         (winapi::WS_EX_APPWINDOW, winapi::WS_POPUP | winapi::WS_CLIPSIBLINGS | winapi::WS_CLIPCHILDREN)
     } else {
         (winapi::WS_EX_APPWINDOW | winapi::WS_EX_WINDOWEDGE,
@@ -149,13 +151,18 @@ unsafe fn init(title: Vec<u16>, window: &WindowAttributes, pf_reqs: &PixelFormat
             style | winapi::WS_VISIBLE
         };
 
+        let parent_ptr = match window.parent {
+            Some(ref handle) => handle.0,
+            None => ptr::null_mut(),
+        };
+
         let handle = user32::CreateWindowExW(ex_style | winapi::WS_EX_ACCEPTFILES,
             class_name.as_ptr(),
             title.as_ptr() as winapi::LPCWSTR,
             style | winapi::WS_CLIPSIBLINGS | winapi::WS_CLIPCHILDREN,
             x.unwrap_or(winapi::CW_USEDEFAULT), y.unwrap_or(winapi::CW_USEDEFAULT),
             width.unwrap_or(winapi::CW_USEDEFAULT), height.unwrap_or(winapi::CW_USEDEFAULT),
-            ptr::null_mut(), ptr::null_mut(), kernel32::GetModuleHandleW(ptr::null()),
+            parent_ptr, ptr::null_mut(), kernel32::GetModuleHandleW(ptr::null()),
             ptr::null_mut());
 
         if handle.is_null() {

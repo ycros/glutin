@@ -198,6 +198,13 @@ impl<'a> WindowBuilder<'a> {
         self
     }
 
+    /// Sets parent for this window, and makes this window a child
+    #[inline]
+    pub fn with_parent(mut self, parent: platform::WindowHandle) -> WindowBuilder<'a> {
+        self.window.parent = Some(parent);
+        self
+    }
+
     /// Builds the window.
     ///
     /// Error should be very rare and only occur in case of permission denied, incompatible system,

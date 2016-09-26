@@ -2,7 +2,7 @@
 
 pub use api::win32;
 pub use api::win32::{MonitorId, get_available_monitors, get_primary_monitor};
-pub use api::win32::{WindowProxy, PollEventsIterator, WaitEventsIterator};
+pub use api::win32::{WindowProxy, PollEventsIterator, WaitEventsIterator, WindowHandle};
 
 use Api;
 use ContextError;
